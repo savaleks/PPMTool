@@ -14,13 +14,33 @@ public class ProjectService {
 
     public Project savedOrUpdateProject(Project project){
 
-        // Logic
         try {
             project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
             return projectRepository.save(project);
         } catch (Exception e){
             throw new ProjectIdExceptions("Project Id " + project.getProjectIdentifier().toUpperCase() + " already exists.");
         }
+    }
 
+    public Project findProjectByIdentifier(String projectId){
+
+        Project project = projectRepository.findByProjectIdentifier(projectId.toUpperCase());
+        if (project == null){
+            throw new ProjectIdExceptions("Project Id " + projectId + " doesn't exists.");
+        }
+        return project;
+    }
+
+    public Iterable<Project> findAllProjects(){
+        return projectRepository.findAll();
+    }
+
+    public void deleteProjectByIdentifier(String projectId){
+        // find project by id
+        Project project = projectRepository.findByProjectIdentifier(projectId.toUpperCase());
+        if (project == null){
+            throw new ProjectIdExceptions("Cannot delete Project with id " + projectId + ". This project doesn't exists.");
+        }
+        projectRepository.delete(project);
     }
 }
